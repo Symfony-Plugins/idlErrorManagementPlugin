@@ -1,0 +1,25 @@
+
+body {
+  font-family:Verdana,Arial,sans-serif;
+}
+
+.idl-application-error-content {
+  margin:auto;
+  width:1000px;
+}
+
+.idl-application-error-message {
+  border:2px solid red;
+  font-family:monospace;
+  font-size:14px;
+  padding:10px;
+}
+
+#application_error_comment {
+  width: 100%;
+}
+
+.idl-application-error-button{
+  width: 100%;
+  text-align: right;
+}

@@ -1,0 +1,25 @@
+generator:
+  class: sfDoctrineGenerator
+  param:
+    model_class:           ApplicationError
+    theme:                 admin
+    non_verbose_templates: true
+    singular:              ~
+    plural:                ~
+    route_prefix:          error_management_error_admin
+    with_doctrine_route:   true
+    actions_base_class:    sfActions
+
+    config:
+      actions: ~
+      fields:  ~
+      list:
+        title:          Application error
+        display:        [created_at, type,  _description, user, comment, severity]
+        object_actions: {}
+        sort:           [created_at, desc]
+      filter:
+        display:        [file, type, message, module, action, user, comment, severity]
+      form:    ~
+      edit:    ~
+      new:     ~

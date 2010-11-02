@@ -1,0 +1,122 @@
+idlErrorManagementPlugin
+========================
+
+This plugin provides a set of functionnalities to handle errors in production environement. The current functionalities are:
+
+ * Possibility to record Exceptions in the database
+ * Possibility to Record php fatal error in the database
+ * Allow users to add comments to recorded errors/exceptions
+ * Browse the recorded exceptions/errors through an admin module
+ * Convert 404 exceptions to standards errors
+ * Sending of emails when the errors occur or when a user add a comment to it
+ 
+ 
+Installation
+------------
+ 
+By using the PEAR package:
+ 
+     $ symfony plugin:install idlDoctrineMigrationPlugin
+     
+Or by downloading the code, or adding an svn:externlas and active the plugin in our ProjectConfiguration.class.php, adding these lines:
+```
+  public function setup() {
+    parent::setup();
+    $this->enablePlugins('idlErrorManagementPlugin');
+  }
+```
+
+By default the plugin does nothing. You must activate the functionalities one by one. Here the detail, of how it works and how to setup each functionality:
+
+
+Record Exception to database
+----------------------------
+
+To start this functionnality, add the following config in your app.yml:
+
+    all:
+      error_management:
+        record_exception_to_db:   true
+
+After this, symfony will notify the plugin each time an exception occurs. The plugin will then record the Exception details and let symfony continue with the standard exception handling mecanism. So this is transparent for the user, but you will get advanced logging in the database.
+
+
+Record php fatal errors in database
+----------------------------------
+
+This is an interesting feature. It is really painful when we get "php fatal error" that completly broke the script...
+With this you will be at able to identify thoses problems and try to fix them. To activate it:
+ 
+    all:
+      error_management:
+        record_php_error:  true
+
+Once you have started this functionality, a small php script will be created in the cache and registered in the php engine with register_shutdown_function() so that the plugin will be able to log the fatal error to the database just before ending.
+
+
+Allow users to comment an error
+------------------------------
+
+This functionality that may not be so useful on a website, but can be very interresting for complex web applications. To activate it, add this in your app.yml:
+
+    all:
+      error_management:
+        ask_user_to_comment:   true
+        after_comment_route:   @homepage
+
+Then, every time an error is recorded in the database, the user is redirected to a specific page allowing him to add a comment about the error and the severity of the problem. This two informations are then attached to the errors.
+By default, once the comment have been posted, the user is redirected to @homepage, this can be overhide with the ``after_comment_route`` parameter
+
+WARNING, As this module is translatable, I18N should be activate. If you are not using I18N, you can use the module by overhiding the template comment ``modules/idlCommentApplicationError/templates/commentLastErrorSuccess.php``
+
+
+Browse the recorded exception/errors through an admin module
+------------------------------------------------------------
+
+To use the module, you just need to activate it in the setting.yml of the application of your choice.
+You will be able to browse every errors recorded...
+
+    .settings:
+      enabled_modules:        [ ... , idlApplicationErrorAdmin]
+
+
+Convert 404 exception to standard error
+---------------------------------------
+
+Sometimes, 404 errors should not occur, in this case, maybe you want the same error management than any other errors.
+This action allows to convert any error 404 to a standard ApplicationError. To use it, just configure the setting.yml with
+
+    .settings
+      error_404_module:       idlErrorManagementTools          # To be called when a 404 error is raised
+      error_404_action:       convert404ToApplicationError     # Or when the requested URL doesn't match any route
+     
+Note that this is only working in none debug mode. In debug mode, symfony will display the standard error page.
+
+
+Sending emails
+--------------
+
+You can configure the plugin to automatically send emails. Here is the config params:
+
+    all:
+      error_management:
+        send_mail_on_error:         false           # To send an email when the error occurs
+        send_mail_on_user_comment:  false           # To send an email when a user comment an error
+        email_to:                   info@example.com
+        email_from:                 info@example.com
+        
+This part of the plugin use the native mailer of symfony, so you have to configure it in factories.yml. For more information, check here:
+http://www.symfony-project.org/reference/1_4/en/05-Factories#chapter_05_mailer
+
+With this, you can get live notification of when your application runs in troubles... 
+
+
+Evolution
+---------
+
+List of functionnality missing or to improved:
+
+ * Find a way to generate the redirect even when it's a php fatal error
+ * Finalize the admin module, specially add a show error page
+
+        

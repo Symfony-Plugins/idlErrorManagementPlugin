@@ -1,0 +1,19 @@
+### Class used to record an application error
+ApplicationError:
+  actAs:
+    Timestampable: ~
+  columns:
+    message:        { type: string(1000), default: NULL }
+    type:           { type: string(100),  default: NULL }
+    file:           { type: string(500),  default: NULL }
+    line:           { type: integer,      default: NULL }
+    trace:          { type: clob,         default: NULL }
+    code:           { type: integer,      default: NULL }
+    module:         { type: string(100),  default: NULL }
+    action:         { type: string(100),  default: NULL }
+    uri:            { type: string(500),  default: NULL }
+    user:           { type: string(100),  default: NULL }
+    comment:        { type: clob,         default: NULL }
+    severity:       { type: enum, values:['low', 'medium', 'high', 'critical'], default: 'medium' }
+    user_agent:     { type: string(100),  default: NULL }
+  

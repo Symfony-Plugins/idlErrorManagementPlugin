@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xliff PUBLIC "-//XLIFF//DTD XLIFF//EN" "http://www.oasis-open.org/committees/xliff/documents/xliff.dtd" >
+<xliff version="1.0">
+  <file original="global" source-language="en" datatype="plaintext">
+    <header/>
+    <body>
+      <trans-unit>
+        <source>The application generate an error and have been stopped</source>
+        <target>L'application a généré une erreur et a dû être interrompue</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Error Message</source>
+        <target>Message d'erreur</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Send a comment about this error</source>
+        <target>Fournir un commentaire concernant cette erreur</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Thanks to describe in which context this error occurs (what did you doing at this time). This comment could help to fix the issue</source>
+        <target>Merci de décrire ci-dessous dans quel contexte l'erreur est arrivée (ce que vous étiez entrain de faire). Ceci aidera à la résolution du problème.</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Severity of the problem</source>
+        <target>Sévérité du problème</target>
+      </trans-unit>
+      <trans-unit>
+        <source>low</source>
+        <target>faible</target>
+      </trans-unit>
+      <trans-unit>
+        <source>medium</source>
+        <target>moyenne</target>
+      </trans-unit>      <trans-unit>
+        <source>high</source>
+        <target>importante</target>
+      </trans-unit>      
+      <trans-unit>
+        <source>critical</source>
+        <target>critique</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Your comment</source>
+        <target>Votre commentaire</target>
+      </trans-unit>
+      <trans-unit>
+        <source>Ignore</source>
+        <target>Ignorer</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

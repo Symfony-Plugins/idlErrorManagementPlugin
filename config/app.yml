@@ -1,0 +1,13 @@
+default:
+  error_management:
+    
+    record_exception_to_db:     false           # To record every exception to database
+    record_php_error:           false           # To record php error
+
+    ask_user_to_comment:        false           # To redirect the user on the comment page    
+    after_comment_route:        @homepage       # Route to redirect after user post a comment
+            
+    send_mail_on_error:         false           # To send a email on every error
+    send_mail_on_user_comment:  false           # To send an email when a user comment an error
+    email_to:                   info@example.com
+    email_from:                 info@example.com

@@ -1,0 +1,26 @@
+# Specific page with a form to allow user to comment the last error
+error_management_comment_last:
+  url:   /error_management/comment_last
+  param: { module: idlCommentApplicationError, action: commentLastError }
+  
+# Attach user comment on the last error 
+error_management_post_comment:
+  class: sfDoctrineRoute
+  options:
+    type:  object
+    model: ApplicationError
+  url:   /error_management/post_comment/:id
+  param: { module: idlCommentApplicationError, action: postComment }
+  requirements:
+    id: \d+
+    sf_method: [post]
+
+# Set of routes for the admin modules        
+error_management_error_admin:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                ApplicationError
+    module:               idlApplicationErrorAdmin
+    prefix_path:          /idlApplicationErrorAdmin
+    column:               id
+    with_wildcard_routes: true
