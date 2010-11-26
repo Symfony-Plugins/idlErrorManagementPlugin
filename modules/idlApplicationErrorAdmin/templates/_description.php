@@ -1,5 +1,5 @@
 <b>
-  <?php echo link_to($application_error->getMessage(), 'error_management_error_admin_edit', $application_error) ?>
+  <?php echo link_to($application_error->getMessage(), 'error_management_error_admin_show', $application_error) ?>
 </b>
 <br>
 <i>

@@ -14,20 +14,9 @@ require_once dirname(__FILE__).'/../lib/idlApplicationErrorAdminGeneratorHelper.
  * idlApplicationErrorAdmin actions.
  */
 class idlApplicationErrorAdminActions extends autoIdlApplicationErrorAdminActions {
-  
-  /* 
-  //Prototype of error display
-  public function executeListDetail(){
-    $error = $this->getRoute()->getObject();
-    $code = $error->getCode();
-    $text = "Detail of the error";
-    $name = $error->getType();
-    $message = $error->getMessage();
-    $traces = explode("\n",$error->getTrace());
-    $template = sfException::getTemplatePathForError('html', true);
-    ob_start();
-    include $template;
-    return $this->renderText(ob_get_clean());
+    
+  public function executeShow(){
+    $this->error = $this->getRoute()->getObject();
   }
-  */
+  
 }
