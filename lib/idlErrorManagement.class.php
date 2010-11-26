@@ -201,17 +201,15 @@ class idlErrorManagement {
       }
     }
       
-    // Retrived the database configuration parameter for current env
-    $dbConfig = sfYaml::load(sfConfig::get('sf_config_dir').DIRECTORY_SEPARATOR.'databases.yml');
+    // Retrived parameters for script generation
     $env = sfConfig::get('sf_environment');
-    $dbConfig = $dbConfig[$env]['doctrine']['param'];
-    preg_match("/.+:host=(.+);dbname=(.+)/",$dbConfig["dsn"], $matches);
-    $host = $matches[1];
-    $dbName = $matches[2];
-    $user = $dbConfig['username'];
-    $password = isset($dbConfig['password']) ? $dbConfig['password'] : null;
     $sessionKey = self::LAST_ERROR_SESSION_KEY;
-    $passwordParam = isset($password) ? ", '".$password."'" : "";
+    $doctrinePath = sfConfig::get('sf_symfony_lib_dir').'/plugins/sfDoctrinePlugin/lib/vendor/doctrine/Doctrine.php';
+    $dbConfig = sfYaml::load(sfConfig::get('sf_config_dir').DIRECTORY_SEPARATOR.'databases.yml');
+    $dbConfig = $dbConfig[$env]['doctrine']['param'];
+    $dsn = $dbConfig["dsn"];
+    $user = $dbConfig['username'];
+    $password = isset($dbConfig['password']) ? "'".$dbConfig['password']."'" : 'null';
     
     
     // Prepare the file by injecting the following code
@@ -225,34 +223,33 @@ class idlErrorManagement {
         return;
       }
       
-      // Record to database
-      \$con = @mysql_connect('$host', '$user' $passwordParam);
-      if (\$con==false){
-        echo ("idlErrorManagementPlugin: Connection to database fail, impossible to record error\n<br>See $file for more info");
-        return;
-      }
-      mysql_select_db('$dbName', \$con);
-      \$sql = "INSERT INTO `application_error` (`type`, `file`, `line`, `code`,  `message`, `user_agent`, `uri`, `created_at`) 
-      VALUES (
-        'PHP error',
-        '".\$error['file']."',
-        '".\$error['line']."',
-        '".\$error['type']."',
-        '".\$error['message']."',
-        '".(isset(\$_SERVER['HTTP_USER_AGENT'])?\$_SERVER['HTTP_USER_AGENT']:'')."',
-        '".(isset(\$_SERVER['REQUEST_URI'])?\$_SERVER['REQUEST_URI']:'')."',
-        '".date("Y-m-d H:i:s")."'
-      );";
-      mysql_query(\$sql,\$con);
+      // Connect to the database using doctrine abstraction layer
+      require_once('$doctrinePath');
+      spl_autoload_register(array('Doctrine', 'autoload'));
+      \$pdo = new PDO('$dsn', '$user', $password);
+      \$conn = Doctrine_Manager::connection(\$pdo);
+      \$conn->execute(
+        "INSERT INTO `application_error` (`type`, `file`, `line`, `code`,  `message`, `user_agent`, `uri`, `created_at`) 
+        VALUES (
+          'PHP error',
+          '".\$error['file']."',
+          '".\$error['line']."',
+          '".\$error['type']."',
+          '".\$error['message']."',
+          '".(isset(\$_SERVER['HTTP_USER_AGENT'])?\$_SERVER['HTTP_USER_AGENT']:'')."',
+          '".(isset(\$_SERVER['REQUEST_URI'])?\$_SERVER['REQUEST_URI']:'')."',
+          '".date("Y-m-d H:i:s")."'
+        )"
+      );
       
       // Place the id to session
-      \$id = mysql_insert_id();
+      \$id = \$conn->lastInsertId();
       if (isset(\$id) && \$id > 0) {
         \$_SESSION['$sessionKey'] = \$id;
       }
       
       // Redirect to comment form
-      // TODO
+      // TODO, but it's difficult as we don't now if header are already send
     }
   }
 ?>
