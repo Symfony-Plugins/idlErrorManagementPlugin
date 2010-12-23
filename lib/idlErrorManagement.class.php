@@ -31,7 +31,7 @@ class idlErrorManagement {
     //  an infinite loop of error creation & redirection 
     $exception = $event->getSubject();
     if ($exception instanceof idlErrorManagementException || strstr($exception->getFile(),'idlErrorManagementPlugin') ){
-      sfContext::getInstance()->getLogger()->err("Bug in the plugin idlErrorManagement, please contact devlopper. Detail: ".$e->getMessage());
+      self::tryToLogError("Bug in the plugin idlErrorManagement, please contact devlopper. Detail: ".$e->getMessage());
       return false;
     }
     
@@ -67,7 +67,7 @@ class idlErrorManagement {
     
     // On any error, we rethrow with the specifc idlApplicationException as we want to prevent cycle in error management
     catch (Exception $e){
-      sfContext::getInstance()->getLogger()->err("Exception occurs while processing processApplicationError(). Detail: ".$e->getMessage());
+      self::tryToLogError("Exception occurs while processing processApplicationError(). Detail: ".$e->getMessage());
     }
   }
 
@@ -143,7 +143,7 @@ class idlErrorManagement {
       );
     }
     catch(Exception $e){
-      sfContext::getInstance()->getLogger()->err("Exception occurs while processing sendErrorByEmail(). Detail: ".$e->getMessage());
+      self::tryToLogError("Exception occurs while processing sendErrorByEmail(). Detail: ".$e->getMessage());
     }
     
   }
@@ -195,9 +195,11 @@ class idlErrorManagement {
     $file = self::getPathToPhpErrorHandlingScript();
     $dir = dirname($file);
     if( !is_dir($dir) ){
+      $umask = umask(0000);
       mkdir($dir, 0777, true);
+      umask($umask);
       if (!is_dir($dir) ){
-        throw new Exception("Impossible to create the directory $path, please check the filesystem permissions.");
+        throw new idlErrorManagementException("Impossible to create the directory $path, please check the filesystem permissions.");
       }
     }
       
@@ -209,8 +211,7 @@ class idlErrorManagement {
     $dbConfig = $dbConfig[$env]['doctrine']['param'];
     $dsn = $dbConfig["dsn"];
     $user = $dbConfig['username'];
-    $password = isset($dbConfig['password']) ? "'".$dbConfig['password']."'" : 'null';
-    
+    $password = isset($dbConfig['password']) ? "'".$dbConfig['password']."'" : 'null';    
     
     // Prepare the file by injecting the following code
     $code = <<<CODE
@@ -260,5 +261,11 @@ CODE;
     if ( ! file_exists($file) ){
       throw new idlErrorManagementException("Impossible to create the script to catch the PHP error. Please check the permissions to create $file");
     }    
+  }
+  
+  public static function tryToLogError($msg){
+    if (sfContext::hasInstance()){
+      sfContext::getInstance()->getLogger()->err("idlErrorManagementException error: ".$msg);
+    }
   }
 }

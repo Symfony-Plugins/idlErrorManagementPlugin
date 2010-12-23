@@ -1,5 +1,7 @@
 default:
   error_management:
+  
+    disable:                    false           # Disable all error management
     
     record_exception_to_db:     false           # To record every exception to database
     record_php_error:           false           # To record php error

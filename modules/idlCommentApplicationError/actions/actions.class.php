@@ -22,8 +22,11 @@ class idlCommentApplicationErrorActions extends sfActions {
 
     try {
       // We try to retrieved the last error from the session
+      $error = null;
       $errorId = $this->getContext()->getStorage()->read(idlErrorManagement::LAST_ERROR_SESSION_KEY);
-      $error = Doctrine::getTable('ApplicationError')->findOneBy('id', $errorId);
+      if ( is_numeric($errorId) ){
+        $error = Doctrine::getTable('ApplicationError')->findOneBy('id', $errorId);
+      }
       
       // If there was no error, than means that we get here from a direct access, for exemple a redirect from the browser
       //  due to an ajax error. It's a pity that there is no error record, but the user can still provide some information

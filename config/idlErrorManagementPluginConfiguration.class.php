@@ -21,6 +21,12 @@ class idlErrorManagementPluginConfiguration extends sfPluginConfiguration {
    * @see sfPluginConfiguration::initialize()
    */
   public function initialize() {
+    
+    // Check if the plugin has been disable
+    if ( sfConfig::get('app_error_management_disable', false) ) {
+      return;
+    }
+    
 
     // Check around HTTP_HOST to prevent using this plugin in CLI mode
     if ( ! isset($_SERVER['HTTP_HOST']) ) {
@@ -34,17 +40,12 @@ class idlErrorManagementPluginConfiguration extends sfPluginConfiguration {
       } 
     }
  
-    // As we want to prevent cycle in error management, we must rethrow any exception as an idlErrorManagementException
-    try {    
-      // Request to be notify when an exception reach symfony controller, 
-      $this->dispatcher->connect('application.throw_exception', array('idlErrorManagement', 'processApplicationError'));
-      // configure the php error handler
-      if ( isset($_SERVER['HTTP_HOST']) && sfConfig::get('app_error_management_record_php_error', false)){
-        idlErrorManagement::registerPhpErrorListener();
-      }
-    }
-    catch (Exception $e){
-      throw new idlErrorManagementException($e);
+
+    // Request to be notify when an exception reach symfony controller, 
+    $this->dispatcher->connect('application.throw_exception', array('idlErrorManagement', 'processApplicationError'));
+    // configure the php error handler
+    if ( isset($_SERVER['HTTP_HOST']) && sfConfig::get('app_error_management_record_php_error', false)){
+      idlErrorManagement::registerPhpErrorListener();
     }
     
   }
